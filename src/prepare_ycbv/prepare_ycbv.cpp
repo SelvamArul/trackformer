@@ -1,12 +1,14 @@
 #include <iostream>
 #include <fstream>
-#include "json.hpp"
+#include <stdexcept>
 #include <typeinfo>
 #include <iomanip>
 #include <string>
 #include <utility>
 #include <set>
 #include <iterator>
+
+#include "json.hpp"
 using json=nlohmann::json;
 
 
@@ -35,28 +37,40 @@ int GetIndex(std::set<uint64_t>& S, uint64_t K)
 }
 
 // area bbox bbox_visib category_id id image_id intrinsic iscrowd pose segmentation segmentation_all
-int main()
+int main(int argc, char **argv)
 {
+    if (argc != 2)
+        throw std::runtime_error("Exactly one argument (path of json file) expected");
+    
     std::ifstream file;
-    file.open("/home/user/periyasa/bkp_instances_test.json");
+    try 
+    {
+        std::cout<<"Opening file: "<<argv[1]<<"\n";
+        file.open(argv[1]);
+    }
+    catch (std::ifstream::failure e) 
+    {
+        std::cerr << "Exception opening file: " << std::strerror(errno) << "\n";
+    }
+
     json j;
     file >> j;
-    for (auto& el : j.items()) 
-    {
-        std::cout << el.key()  << "\n";
-    }
+    /* for (auto& el : j.items()) */ 
+    /* { */
+    /*     std::cout << el.key()  << "\n"; */
+    /* } */
     seq_map sequence_length;
     seq_map annotation_length;
     track_map track_ids;
     int count(0);
 
-    for (auto& el : j.items()) 
-    {
-        std::cout << el.key()  << "\n";
-    }
-    std::cout<<"*****************************\n";
+    /* for (auto& el : j.items()) */ 
+    /* { */
+    /*     std::cout << el.key()  << "\n"; */
+    /* } */
+    /* std::cout<<"*****************************\n"; */
 
-    std::cout<<"*****************************\n";
+    /* std::cout<<"*****************************\n"; */
     for(auto& el :j["annotations"].items())
     {
         uint64_t img_id = el.value()["image_id"];
@@ -66,7 +80,7 @@ int main()
         track_ids[seq_id].insert((uint64_t) el.value()["category_id"]);
         count++;
     }
-    std::cout << count << std::endl;
+    /* std::cout << count << std::endl; */
     count = 0;
     for(const auto& seq : annotation_length)
     {
@@ -75,20 +89,20 @@ int main()
             sequence_length[seq.first / 1000000] += 1;
             count++;
     }
-    std::cout<<"count "<<count<<std::endl;
-    std::cout<<" -------- "<<std::endl;
+    /* std::cout<<"count "<<count<<std::endl; */
+    /* std::cout<<" -------- "<<std::endl; */
     
-    for(const auto& seq : sequence_length)
-    {
-        std::cout<<seq.first<<" "<<seq.second<<"\n";
-    }
-    std::cout<<" ------------- "<<std::endl;
-    for(const auto& track : track_ids)
-    {
-        std::cout<<track.first <<" \n ";
-        for (const auto& img : track.second)
-            std::cout <<img<<" ";
-    }
+    /* for(const auto& seq : sequence_length) */
+    /* { */
+    /*     std::cout<<seq.first<<" "<<seq.second<<"\n"; */
+    /* } */
+    /* std::cout<<" ------------- "<<std::endl; */
+    /* for(const auto& track : track_ids) */
+    /* { */
+    /*     /1* std::cout<<track.first <<" \n "; *1/ */
+    /*     for (const auto& img : track.second) */
+    /*         std::cout <<img<<" "; */
+    /* } */
 
     for (auto& el : j["annotations"].items())
     {
